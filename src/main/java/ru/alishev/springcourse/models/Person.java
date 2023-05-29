@@ -8,31 +8,31 @@ import javax.validation.constraints.Pattern;
  * @author Neil Alishev
  */
 public class Person {
-    private int personId;
+    private int id;
 
     @NotEmpty(message = "Name should not be empty")
     @Pattern(regexp = "[A-ZА-Я][a-zа-я]+ [A-ZА-Я][a-zа-я]+ [A-ZА-Я][a-zа-я]+", message = "Full name should be this format: Surname Name Patronymic")
     private String fullName;
 
     @Min(value = 1901, message = "Year of birth should be greater than 1900")
-    private int yearBirth;
+    private int yearOfBirth;
 
     public Person() {
 
     }
 
-    public Person(int personId, String fullName, int yearBirth) {
-        this.personId = personId;
+    public Person(int id, String fullName, int yearOfBirth) {
+        this.id = id;
         this.fullName = fullName;
-        this.yearBirth = yearBirth;
+        this.yearOfBirth = yearOfBirth;
     }
 
-    public int getPersonId() {
-        return personId;
+    public int getId() {
+        return id;
     }
 
-    public void setPersonId(int personId) {
-        this.personId = personId;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getFullName() {
@@ -43,11 +43,11 @@ public class Person {
         this.fullName = fullName;
     }
 
-    public int getYearBirth() {
-        return yearBirth;
+    public int getYearOfBirth() {
+        return yearOfBirth;
     }
 
-    public void setYearBirth(int yearBirth) {
-        this.yearBirth = yearBirth;
+    public void setYearOfBirth(int yearOfBirth) {
+        this.yearOfBirth = yearOfBirth;
     }
 }
