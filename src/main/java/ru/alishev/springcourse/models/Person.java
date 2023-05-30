@@ -18,11 +18,9 @@ public class Person {
     private int yearOfBirth;
 
     public Person() {
-
     }
 
-    public Person(int id, String fullName, int yearOfBirth) {
-        this.id = id;
+    public Person(String fullName, int yearOfBirth) {
         this.fullName = fullName;
         this.yearOfBirth = yearOfBirth;
     }

@@ -17,17 +17,13 @@ public class Book {
     @NotNull(message = "Enter the year of book")
     private int year;
 
-    private Integer personId;
-
     public Book() {
     }
 
-    public Book(int id, String title, String author, int year, Integer personId) {
-        this.id = id;
+    public Book(String title, String author, int year) {
         this.title = title;
         this.author = author;
         this.year = year;
-        this.personId = personId;
     }
 
     public int getId() {
@@ -60,13 +56,5 @@ public class Book {
 
     public void setYear(int year) {
         this.year = year;
-    }
-
-    public Integer getPersonId() {
-        return personId;
-    }
-
-    public void setPersonId(Integer personId) {
-        this.personId = personId;
     }
 }

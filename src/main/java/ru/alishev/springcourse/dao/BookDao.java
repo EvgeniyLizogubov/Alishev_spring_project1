@@ -5,8 +5,10 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.alishev.springcourse.models.Book;
+import ru.alishev.springcourse.models.Person;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class BookDao {
@@ -40,12 +42,17 @@ public class BookDao {
         jdbcTemplate.update("DELETE FROM book WHERE id=?", id);
     }
 
-    public List<Book> indexByPersonId(int personId) {
-        return jdbcTemplate.query("SELECT * FROM book WHERE person_id=?", new Object[]{personId},
-                new BeanPropertyRowMapper<>(Book.class));
+    public Optional<Person> getBookOwner(int id) {
+        return jdbcTemplate.query("SELECT person.* FROM book JOIN person ON book.person_id=person.id " +
+                "WHERE book.id=?", new Object[]{id}, new BeanPropertyRowMapper(Person.class))
+                .stream().findAny();
     }
 
-    public void changeOwner(int id, Integer personId) {
-        jdbcTemplate.update("UPDATE book SET person_id=? WHERE id=?", personId, id);
+    public void release(int id) {
+        jdbcTemplate.update("UPDATE book SET person_id=NULL WHERE id=?", id);
+    }
+
+    public void assign(int id, Person selectedPerson) {
+        jdbcTemplate.update("UPDATE book SET person_id=? WHERE id=?", selectedPerson.getId(), id);
     }
 }
