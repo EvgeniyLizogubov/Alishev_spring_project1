@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-public class BookDao {
+public class BookDAO {
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public BookDao(JdbcTemplate jdbcTemplate) {
+    public BookDAO(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

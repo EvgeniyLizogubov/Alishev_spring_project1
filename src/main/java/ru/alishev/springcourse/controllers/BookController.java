@@ -5,7 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.alishev.springcourse.dao.BookDao;
+import ru.alishev.springcourse.dao.BookDAO;
 import ru.alishev.springcourse.dao.PersonDAO;
 import ru.alishev.springcourse.models.Book;
 import ru.alishev.springcourse.models.Person;
@@ -16,11 +16,11 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/books")
 public class BookController {
-    private final BookDao bookDao;
+    private final BookDAO bookDao;
     private final PersonDAO personDAO;
 
     @Autowired
-    public BookController(BookDao bookDao, PersonDAO personDAO) {
+    public BookController(BookDAO bookDao, PersonDAO personDAO) {
         this.bookDao = bookDao;
         this.personDAO = personDAO;
     }
