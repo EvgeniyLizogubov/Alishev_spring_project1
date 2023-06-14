@@ -4,6 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.util.Date;
 
 @Entity
 @Table(name = "book")
@@ -29,6 +30,13 @@ public class Book {
     @ManyToOne
     @JoinColumn(name = "person_id", referencedColumnName = "id")
     private Person owner;
+
+    @Column(name = "taking_time")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date takingTime;
+
+    @Transient
+    private boolean overdue;
 
     public Book() {
     }
@@ -77,5 +85,21 @@ public class Book {
 
     public void setOwner(Person owner) {
         this.owner = owner;
+    }
+
+    public Date getTakingTime() {
+        return takingTime;
+    }
+
+    public void setTakingTime(Date takingTime) {
+        this.takingTime = takingTime;
+    }
+
+    public boolean isOverdue() {
+        return overdue;
+    }
+
+    public void setOverdue(boolean overdue) {
+        this.overdue = overdue;
     }
 }
