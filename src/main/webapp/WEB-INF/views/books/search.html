@@ -6,20 +6,32 @@
 </head>
 <body>
 
-<form method="POST" action="/books/search">
-    <label for="search">Enter book's title: </label>
-    <input type="text" id="search" name="searchBook">
+<form th:method="POST" th:action="@{/books/search}">
+    <label for="query">Enter book's title: </label>
+    <input type="text" id="query" name="query">
     <br>
     <input type="submit" value="Search">
 </form>
 
-<span th:if="${books.isEmpty()}" th:text="'Books not found'">VALUE</span>
+<div th:if="${books}">
+    <div th:if="${books.isEmpty()}">
+        <span>Books not found</span>
+    </div>
 
-<div th:each="book : ${books}">
-    <p th:text="${book.getTitle() + ', ' + book.getAuthor() + ', ' + book.getYear()}">VALUE</p>
-    <p th:text="${book.getOwner()} ? 'Book\'s owner: ' + ${book.getOwner().getFullName()} : 'The book is free'">VALUE</p>
-    <hr>
+    <div th:each="book : ${books}">
+        <p th:text="${book.getTitle() + ', ' + book.getAuthor() + ', ' + book.getYear()}">VALUE</p>
+
+        <div th:if="${book.getOwner() != null}">
+            <span>Book's owner: </span><span th:text="${book.getOwner().getFullName()}">VALUE</span>
+        </div>
+
+        <div th:if="${book.getOwner() == null}">
+            <span>The book is free</span>
+        </div>
+
+        <hr>
+    </div>
 </div>
-<!--'Book\'s owner: ' +-->
+
 </body>
 </html>

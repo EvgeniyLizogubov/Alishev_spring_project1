@@ -7,16 +7,16 @@
 <body>
 <p th:text="${person.getFullName() + ', ' + person.getYearOfBirth()}">VALUE</p>
 
-<div th:if="${person.books.isEmpty()}">
+<div th:if="${books.isEmpty()}">
     <p>Человек пока не взял ни одной книги</p>
     <hr/>
 </div>
 
-<div th:if="${!person.books.isEmpty()}">
+<div th:if="${!books.isEmpty()}">
     <hr/>
     <b>Книги:</b>
     <br/>
-    <table th:each="book : ${person.books}">
+    <table th:each="book : ${books}">
         <tr>
             <td th:style="${book.isOverdue() ? 'color: red;' : _ }" th:text="${book.getTitle()} + ', ' + ${book.getAuthor()} + ', ' + ${book.getYear()}">VALUE</td>
         </tr>

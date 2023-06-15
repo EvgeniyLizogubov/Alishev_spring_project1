@@ -1,7 +1,6 @@
 package ru.alishev.springcourse.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,7 +11,6 @@ import ru.alishev.springcourse.services.BookService;
 import ru.alishev.springcourse.services.PersonService;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @Controller
 @RequestMapping("/books")
@@ -27,10 +25,14 @@ public class BookController {
     }
 
     @GetMapping
-    public String index(Model model, @Nullable @RequestParam(value = "page") Integer page,
-                        @Nullable @RequestParam(value = "books_per_page") Integer booksPerPage,
-                        @Nullable @RequestParam(value = "sort_by_year") Boolean sortByYear) {
-        model.addAttribute("books", bookService.findAll(page, booksPerPage, sortByYear));
+    public String index(Model model, @RequestParam(value = "page", required = false) Integer page,
+                        @RequestParam(value = "books_per_page", required = false) Integer booksPerPage,
+                        @RequestParam(value = "sort_by_year", required = false) boolean sortByYear) {
+        if (page == null || booksPerPage == null)
+            model.addAttribute("books", bookService.findAll(sortByYear));
+        else
+            model.addAttribute("books", bookService.findAllWithPagination(page, booksPerPage, sortByYear));
+
         return "books/index";
     }
 
@@ -98,17 +100,13 @@ public class BookController {
     }
 
     @GetMapping("/search")
-    public String searchBook() {
+    public String searchPage() {
         return "books/search";
     }
 
     @PostMapping("/search")
-    public String search(@RequestParam String searchBook, Model model) {
-        if (searchBook.isEmpty())
-            return "books/search";
-
-        List<Book> books = bookService.findByTitle(searchBook);
-        model.addAttribute("books", books);
+    public String search(@RequestParam String query, Model model) {
+        model.addAttribute("books", bookService.findByTitle(query));
         return "books/search";
     }
 }

@@ -1,14 +1,17 @@
 package ru.alishev.springcourse.services;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.alishev.springcourse.models.Book;
 import ru.alishev.springcourse.models.Person;
 import ru.alishev.springcourse.repositories.PersonRepository;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -29,17 +32,22 @@ public class PersonService {
         return personRepository.findById(id).orElse(null);
     }
 
-    public Person findOneWithBooks(int id) {
-        Person person = personRepository.findOneByIdWithBooks(id);
-        person.getBooks().forEach(book -> {
-            Date takingTime = book.getTakingTime();
-            if (takingTime != null) {
-                long diffInMillies = Math.abs(new Date().getTime() - takingTime.getTime());
-                long diff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-                book.setOverdue(diff > 10);
-            }
-        });
-        return person;
+    public List<Book> getBooksByPersonId(int id) {
+        Optional<Person> person = personRepository.findById(id);
+
+        if (person.isPresent()) {
+            Hibernate.initialize(person.get().getBooks());
+
+            person.get().getBooks().forEach(book -> {
+                long diffInMillies = Math.abs(book.getTakingTime().getTime() - new Date().getTime());
+                if (diffInMillies > 864000000)
+                    book.setOverdue(true);
+            });
+
+            return person.get().getBooks();
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     @Transactional
@@ -56,5 +64,9 @@ public class PersonService {
     @Transactional
     public void delete(int id) {
         personRepository.deleteById(id);
+    }
+
+    public Optional<Person> getPersonByFullName(String fullName) {
+        return personRepository.findByFullName(fullName);
     }
 }

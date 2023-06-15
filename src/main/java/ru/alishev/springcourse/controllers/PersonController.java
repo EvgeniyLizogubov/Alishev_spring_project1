@@ -7,6 +7,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.alishev.springcourse.models.Person;
 import ru.alishev.springcourse.services.PersonService;
+import ru.alishev.springcourse.util.PersonValidator;
 
 import javax.validation.Valid;
 
@@ -18,10 +19,12 @@ import javax.validation.Valid;
 public class PersonController {
 
     private final PersonService personService;
+    private final PersonValidator personValidator;
 
     @Autowired
-    public PersonController(PersonService personService) {
+    public PersonController(PersonService personService, PersonValidator personValidator) {
         this.personService = personService;
+        this.personValidator = personValidator;
     }
 
     @GetMapping()
@@ -32,7 +35,8 @@ public class PersonController {
 
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id, Model model) {
-        model.addAttribute("person", personService.findOneWithBooks(id));
+        model.addAttribute("person", personService.findOne(id));
+        model.addAttribute("books", personService.getBooksByPersonId(id));
         return "people/show";
     }
 
@@ -44,6 +48,8 @@ public class PersonController {
     @PostMapping()
     public String create(@ModelAttribute("person") @Valid Person person,
                          BindingResult bindingResult) {
+        personValidator.validate(person, bindingResult);
+
         if (bindingResult.hasErrors())
             return "people/new";
 

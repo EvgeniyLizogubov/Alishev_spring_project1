@@ -23,19 +23,18 @@ public class BookService {
         this.bookRepository = bookRepository;
     }
 
-    public List<Book> findAll(Integer page, Integer booksPerPage, Boolean sortByYear) {
-        List<Book> books;
-
-        if (page != null && booksPerPage != null && Boolean.TRUE.equals(sortByYear))
-            books = bookRepository.findAll(PageRequest.of(page, booksPerPage, Sort.by("year"))).getContent();
-        else if (page != null && booksPerPage != null)
-            books = bookRepository.findAll(PageRequest.of(page, booksPerPage)).getContent();
-        else if (Boolean.TRUE.equals(sortByYear))
-            books = bookRepository.findAll(Sort.by("year"));
+    public List<Book> findAll(boolean sortByYear) {
+        if (sortByYear)
+            return bookRepository.findAll(Sort.by("year"));
         else
-            books = bookRepository.findAll();
+            return bookRepository.findAll();
+    }
 
-        return books;
+    public List<Book> findAllWithPagination(Integer page, Integer booksPerPage, boolean sortByYear) {
+        if (sortByYear)
+            return bookRepository.findAll(PageRequest.of(page, booksPerPage, Sort.by("year"))).getContent();
+        else
+            return bookRepository.findAll(PageRequest.of(page, booksPerPage)).getContent();
     }
 
     public Book findOne(int id) {
@@ -43,7 +42,7 @@ public class BookService {
     }
 
     public Person getBookOwner(int id) {
-        return bookRepository.getBookOwner(id);
+        return bookRepository.findById(id).map(Book::getOwner).orElse(null);
     }
 
     @Transactional
@@ -53,7 +52,11 @@ public class BookService {
 
     @Transactional
     public void update(int id, Book updatedBook) {
+        Book bookToBeUpdated = bookRepository.findById(id).get();
+
         updatedBook.setId(id);
+        updatedBook.setOwner(bookToBeUpdated.getOwner());
+
         bookRepository.save(updatedBook);
     }
 
@@ -64,13 +67,18 @@ public class BookService {
 
     @Transactional
     public void release(int id) {
-        bookRepository.release(id);
+        bookRepository.findById(id).ifPresent(book -> {
+            book.setOwner(null);
+            book.setOverdue(false);
+        });
     }
 
     @Transactional
     public void assign(int id, Person selectedPerson) {
-        Date takingDate = new Date();
-        bookRepository.assign(id, selectedPerson, takingDate);
+        bookRepository.findById(id).ifPresent(book -> {
+            book.setOwner(selectedPerson);
+            book.setTakingTime(new Date());
+        });
     }
 
     public List<Book> findByTitle(String searchBook) {
